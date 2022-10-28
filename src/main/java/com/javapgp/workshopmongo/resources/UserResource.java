@@ -1,5 +1,6 @@
 package com.javapgp.workshopmongo.resources;
 
+import com.javapgp.workshopmongo.domain.Post;
 import com.javapgp.workshopmongo.domain.User;
 import com.javapgp.workshopmongo.dto.UserDTO;
 import com.javapgp.workshopmongo.services.UserService;
@@ -43,4 +44,23 @@ public class UserResource {
         return ResponseEntity.created(uri).build();
     }
 
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id){
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
+    public ResponseEntity<Void> update(@RequestBody UserDTO objDto, @PathVariable String id){
+        User user = userService.fromDTO(objDto);
+        user.setId(id);
+        user = userService.update(user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/posts")
+    public ResponseEntity<List<Post>> findPosts(@PathVariable String id){
+        User user = userService.findById(id);
+        return ResponseEntity.ok().body(user.getPost());
+    }
 }
